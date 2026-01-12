@@ -12,6 +12,7 @@ public class CardPlacementManger : MonoBehaviour
     [SerializeField] private GameManager gameManager; //게임매니저
     [SerializeField] private List<CardButton> Buttons; // 버튼 상호작용
     
+
     [Header("카드덱관련")]
     [SerializeField] private List<string> usingCard;  //사용할 카드덱
     [SerializeField] private List<string> rememberCard; // 제외시킨 은열쇠 기억용
@@ -34,14 +35,17 @@ public class CardPlacementManger : MonoBehaviour
     [SerializeField] private int keyCount = 0;   //현재 얻은키의 갯수
     [SerializeField] private List<GameObject> Keyslots;
 
-    [Header("넘겨받기용")]
+    [Header("넘겨 주기,받기용")]
     public int useCardNum; // 카드 고유넘버 넘겨받기용
     public int usekeyCount = 0;  //열쇠 갯수 넘겨주기용
     public CardSlot currentSlot; //슬롯 정보 넘겨받기용
+    public CardButton currentButton; //버튼 정보 넘겨받기용
 
     [Header("버튼막는용 투명 패널")] 
     [SerializeField] private UnityEngine.UI.RawImage shild;
     [SerializeField] private UnityEngine.UI.RawImage shild2;
+
+    private bool reversCardClose = false; // 카드를 다시 뒤집는지 여부 
 
     private void Awake()
     {   // usingCard,remembercard 리스트에 16장의 카드를 추가,이미지오브젝트 생성
@@ -59,7 +63,7 @@ public class CardPlacementManger : MonoBehaviour
     }
    
     public void useLogic()
-    {
+    { //게임매니저로 시작시 카드 배치 넘겨주기용 
         Placement();
     }
     private void RegistrationCard(List<string>Card)
@@ -134,9 +138,8 @@ public class CardPlacementManger : MonoBehaviour
     }
 
     private void OutCardNum()
-    {
+    { //넘겨받은 숫자 카드넘에 수정되지 않도록 저장해두기
         cardNum = useCardNum;
-
     }
 
     public void CallingMoveCardImage()
@@ -176,7 +179,9 @@ public class CardPlacementManger : MonoBehaviour
                 break;
             case 5:
                 //EmptyRoomCard
+                 reversCardClose = true;
                 SwichControll(EmptyRoomCard);
+            
                 break;
             case 6:
                 //ExitCard
@@ -187,14 +192,21 @@ public class CardPlacementManger : MonoBehaviour
     }
     private GameObject SwichControll(List<GameObject> cardList)
     {
+       
         foreach (GameObject card in cardList)
         {
             if (!card.activeSelf)
             {
-               
+                
                 card.transform.SetParent(currentSlot.transform, true);
-                    
+                
                 StartCoroutine(ShowCard(card));
+                if (reversCardClose == true)
+                {
+                    
+                    StartCoroutine(CloseCard(card));
+                   
+                }
                 return card;
 
             }
@@ -213,6 +225,19 @@ public class CardPlacementManger : MonoBehaviour
             shild.gameObject.SetActive(false);
         });
         
+    }
+  
+    private IEnumerator CloseCard(GameObject card)
+    {
+        
+        shild2.gameObject.SetActive(true);
+        yield return new WaitForSeconds(2f);
+        card.transform.DOScaleX(0, 0.5f).OnComplete(() =>
+        {
+            card.gameObject.SetActive(false);
+            currentButton.UseRevers();
+        });
+        reversCardClose = false;
     }
 
     private void Cueingslot(GameObject card)
@@ -235,7 +260,7 @@ public class CardPlacementManger : MonoBehaviour
     private IEnumerator MovingSlot(Transform target, Transform newParent)
     {
 
-        //shild2.gameObject.SetActive(true); // 패널로 가려서 버튼이 안눌리게
+        shild2.gameObject.SetActive(true); // 패널로 가려서 버튼이 안눌리게
         Vector3 wordposition = target.position;
 
         yield return new WaitForSeconds(1f);
@@ -316,7 +341,7 @@ public class CardPlacementManger : MonoBehaviour
             Buttons.gameObject.SetActive(false);
         }
 
-        //모든 슬롯의 카드 파괴
+        //모든 슬롯의 카드 비활성화
         foreach (GameObject Slot in slots)
         {
             foreach (Transform child in Slot.transform)
