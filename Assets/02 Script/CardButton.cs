@@ -10,7 +10,7 @@ public class CardButton : MonoBehaviour
     private Tween ScaleTween;
 
     public void UseFor()
-    {
+    {//참조가 없어보이지만 버튼으로 연결되어있음
         cardPlacementManger.currentButton = this;
         shild.gameObject.SetActive(true);
         ButtonDeactivation();

@@ -1,27 +1,39 @@
 
 using System.Collections.Generic;
-
+using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 
 
 public class CardSlot : MonoBehaviour
 {
     [SerializeField] private string cardName;
+    [SerializeField] private int cardNum;
     [SerializeField] private CardPlacementManger cardPlacementManger;
     [SerializeField] private CardEffectManager cardEffectManager;
     [SerializeField] private int keyCount;
+  
     
 
-    public void Indata(string name)
+    public void Useindata(string name)
+    {
+        Indata(name);
+    }
+    private void Indata(string name)
     {
         cardName = name;
     }
 
     public void callingcardOut()
-    { //버튼용.
+    { //카드뒷면버튼용.
         CardCall(cardName);
+        Cardpush();
     }
 
+    public void CallingProvisouOut()
+    {//단서버튼용
+        CardCall(cardName);
+        provisocalling();
+    }
  
     public void CallKeyCount()
     {
@@ -34,47 +46,69 @@ public class CardSlot : MonoBehaviour
         CallKeyCount();
         if (keyCount == 3)
         {
-            cardPlacementManger.useCardNum = 6;
             
+            cardNum = 6;
         }
         else
         {
-            cardPlacementManger.useCardNum = 5;
             
+            cardNum = 5;
         }
     }
 
     private void CardCall(string name)
     {
+
         cardPlacementManger.currentSlot = this;
         switch (name)
         {
             case "방탄조끼":
-                cardPlacementManger.useCardNum = 0;
+                
+                cardNum = 0;
+                cardPlacementManger.currentbulletProofSlot = this;
                 break;
             case "최면가스":
-                cardPlacementManger.useCardNum = 1;
+                cardNum = 1;
                 break;
             case "아무것도없는방":
-                cardPlacementManger.useCardNum = 5;
+                cardNum = 5;
                 break;
             case "은열쇠":
-                cardPlacementManger.useCardNum = 3;
+                cardNum = 3;
                 // 얻은 카드 제외용
                 break;
             case "살인마의함정":
-                cardPlacementManger.useCardNum = 2;
+                cardNum = 2;
                 break;
             case "작은단서":
-                cardPlacementManger.useCardNum = 4;
+                cardNum = 4;
                 break;
             case "탈출구":
                 ExitCard();
                 break;
 
         }
-        cardPlacementManger.CallingMoveCardImage();
-        cardEffectManager.activate(name);
-
+        
+            
     }
+    public void UsecaingeCard(string cardName)
+    {
+        caingeCard(cardName);
+    }
+    private void caingeCard(string name)
+    {
+        cardName = name;
+    }
+    private void provisocalling()
+    {
+        cardPlacementManger.UseLittelProviso(cardNum);
+    }
+    private void Cardpush()
+    {
+        cardPlacementManger.CallingMoveCardImage(cardNum);
+        cardEffectManager.activate(cardName);
+    }
+    
+
+  
 }
