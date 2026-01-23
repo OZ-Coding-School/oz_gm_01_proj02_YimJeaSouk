@@ -10,6 +10,7 @@ public class CardPlacementManger : MonoBehaviour
     [Header("스크립트연결")]
     [SerializeField] private List<GameObject> slots;  //카드슬롯
     [SerializeField] private GameManager gameManager; //게임매니저
+    [SerializeField] private SoundManager sound;
     [SerializeField] private List<CardButton> Buttons; // 버튼 상호작용
 
 
@@ -52,6 +53,7 @@ public class CardPlacementManger : MonoBehaviour
     [Header("작은단서")]
     [SerializeField] private GameObject activeProvisoButton;
     [SerializeField] private List<CardButton> ProvisoButtons;
+    [SerializeField] private UnityEngine.UI.RawImage flesh;
 
 
     private bool reversCardClose = false; // 카드를 다시 뒤집는지 여부 
@@ -184,7 +186,7 @@ public class CardPlacementManger : MonoBehaviour
     }
     private void MoveCardImage(int cardNum)
     { // 슬롯에서 넘겨받은 0~6의 int 데이터에 따른 카드 이미지 처리
-        
+        sound.UsePlaySound(0);
         switch (cardNum)
         {
             case 0:
@@ -225,6 +227,7 @@ public class CardPlacementManger : MonoBehaviour
             case 6:
                 //ExitCard
                 SwichControll(ExitCard);
+                gameManager.UseGameclaer();
                 break;
 
         }
@@ -271,9 +274,11 @@ public class CardPlacementManger : MonoBehaviour
         
         shild2.gameObject.SetActive(true);
         yield return new WaitForSeconds(2f);
+        sound.UsePlaySound(0);
         card.transform.DOScaleX(0, 0.5f).OnComplete(() =>
         {
             card.gameObject.SetActive(false);
+            card.transform.localScale = new Vector3(1, 1, 1);
             currentButton.UseRevers();
         });
         reversCardClose = false;
@@ -303,7 +308,7 @@ public class CardPlacementManger : MonoBehaviour
         Vector3 wordposition = target.position;
 
         yield return new WaitForSeconds(1f);
-
+        sound.UsePlaySound(3);
         target.DOMove(newParent.position, 0.5f).SetEase(Ease.InOutSine).OnComplete(() =>
         {
             target.SetParent(newParent, true);
@@ -445,9 +450,14 @@ public class CardPlacementManger : MonoBehaviour
                 card.transform.localPosition = Vector3.zero;
                 card.gameObject.SetActive(true);
 
-                card.gameObject.transform.DOScale(2f, 0.05f).OnComplete(()=>
+                flesh.gameObject.SetActive(true);
+                flesh.gameObject.transform.DOScale(1.2f, 0.05f).OnComplete(() =>
                 {
-                    card.gameObject.transform.DOScale(1.0f, 0.05f);
+                    flesh.gameObject.SetActive(false);
+                    card.gameObject.transform.DOScale(2f, 0.05f).OnComplete(() =>
+                    {
+                        card.gameObject.transform.DOScale(1.0f, 0.05f);
+                    });
                 });
                 return;
 
@@ -530,5 +540,5 @@ public class CardPlacementManger : MonoBehaviour
         shild2.gameObject.SetActive(false);
 
     }
-    
+
 }

@@ -14,7 +14,9 @@ public class provisoButton : MonoBehaviour
     [SerializeField] private GameObject cardback;
     [SerializeField] private GameObject imagecard;
     [SerializeField] private Image cardBack;
-    
+    [SerializeField] private SoundManager sound;
+
+
 
     public void UseFor()
     {
@@ -24,7 +26,7 @@ public class provisoButton : MonoBehaviour
     }
     private void ProvisoShowing()
     {
-
+        sound.UsePlaySound(10);
         cardBack.DOFade(0.5f, 0.5f).OnComplete(()=>
         {
             StartCoroutine(showproviso());
@@ -41,6 +43,10 @@ public class provisoButton : MonoBehaviour
         if(cardback.gameObject.activeSelf)
         {
             ProvisoButton.gameObject.SetActive(true);
+            ProvisoButton.GetComponent<Image>().DOFade(0.25f, 0.2f).OnComplete(()=>
+            {
+                sound.UsePlaySound(2);
+            });
         }
     }
 

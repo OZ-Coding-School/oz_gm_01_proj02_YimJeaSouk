@@ -10,6 +10,7 @@ public class CardSlot : MonoBehaviour
     [SerializeField] private int cardNum;
     [SerializeField] private CardPlacementManger cardPlacementManger;
     [SerializeField] private CardEffectManager cardEffectManager;
+    [SerializeField] private SoundManager sound;
     [SerializeField] private int keyCount;
   
     
@@ -58,7 +59,7 @@ public class CardSlot : MonoBehaviour
 
     private void CardCall(string name)
     {
-
+        
         cardPlacementManger.currentSlot = this;
         switch (name)
         {

@@ -5,6 +5,7 @@ public class CardButton : MonoBehaviour
 {
     [SerializeField] private UnityEngine.UI.Button playButton;
     [SerializeField] private CardPlacementManger cardPlacementManger;
+    [SerializeField] private SoundManager sound;
     [SerializeField] private UnityEngine.UI.RawImage shild;
     [SerializeField] private UnityEngine.UI.RawImage shild2;
     private Tween ScaleTween;
